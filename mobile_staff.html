@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Pro - App Staff</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --phone-bg: #111827;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #A3E635;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Back to Hub Button */
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 360px;
+            height: 740px;
+            background: #000;
+            border-radius: 44px;
+            padding: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        /* Notch / Dynamic Island simulation */
+        .phone-notch {
+            width: 120px;
+            height: 30px;
+            background: #000;
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 20px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-notch::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: absolute;
+            right: 20px;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: var(--phone-bg);
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #fff;
+            z-index: 10;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Content Area */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Screens (Hidden by default except active) */
+        .screen {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.25rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            height: 70px;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+        }
+
+        /* Notification / Access Item */
+        .notif-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .notif-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notif-content p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .notif-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Search Box */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
+        }
+
+        /* Action Button */
+        .action-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* Hide scrollbar */
+        .app-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .app-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Responsive for Real Mobile Devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                overflow: hidden;
+            }
+
+            .phone-frame {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .phone-notch {
+                display: none;
+            }
+
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+                z-index: 30;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 0.5rem;
+                border-radius: 50%;
+            }
+
+            .back-btn span {
+                display: none;
+            }
+
+            /* Hide text, keep icon */
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="index.html" class="back-btn">
+        <i class="ti ti-arrow-left"></i> Volver al Hub
+    </a>
+
+    <!-- PHONE FRAME -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <div class="phone-screen">
+            <!-- STATUS BAR -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <i class="ti ti-wifi"></i>
+                    <i class="ti ti-battery-filled"></i>
+                </div>
+            </div>
+
+            <!-- APP CONTENT -->
+            <div class="app-content" id="app-content">
+
+                <!-- SCREEN: SCAN -->
+                <div class="screen active" id="screen-scan">
+                    <style>
+                        @keyframes scan {
+                            0% {
+                                top: 0%;
+                            }
+
+                            100% {
+                                top: 100%;
+                            }
+                        }
+                    </style>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Escanear QR</h2>
+
+                    <div class="glass-card"
+                        style="text-align: center; padding: 2rem; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 300px;">
+                        <div
+                            style="width: 200px; height: 200px; border: 2px solid var(--primary); border-radius: 20px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.4);">
+                            <div
+                                style="width: 100%; height: 2px; background: var(--primary); position: absolute; top: 0; animation: scan 2s infinite linear;">
+                            </div>
+                            <i class="ti ti-camera" style="font-size: 3rem; color: rgba(255,255,255,0.2);"></i>
+                        </div>
+                        <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">Apunta a la pantalla
+                            del socio</p>
+                        <button class="action-btn" style="margin-top: 1.5rem;" onclick="simulateScan()">Simular
+                            Escaneo</button>
+                    </div>
+                </div>
+
+                <!-- SCREEN: SOCIOS -->
+                <div class="screen" id="screen-socios">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Gestión de Socios</h2>
+
+                    <div class="search-box">
+                        <i class="ti ti-search"></i>
+                        <input type="text" placeholder="Buscar por nombre o ID...">
+                    </div>
+
+                    <div class="glass-card" style="padding: 0;">
+                        <div class="notif-item">
+                            <div class="notif-icon"><i class="ti ti-user"></i></div>
+                            <div class="notif-content">
+                                <h4>Martín García</h4>
+                                <p>Plan Mensual · Activo</p>
+                                <div class="notif-time">ID: #00421</div>
+                            </div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-icon"><i class="ti ti-user"></i></div>
+                            <div class="notif-content">
+                                <h4>Ana Ramírez</h4>
+                                <p>Plan Anual · Activo</p>
+                                <div class="notif-time">ID: #00422</div>
+                            </div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-icon" style="color: var(--danger);"><i class="ti ti-user-off"></i></div>
+                            <div class="notif-content">
+                                <h4 style="color: var(--danger);">Carlos Pérez</h4>
+                                <p style="color: var(--text-muted);">Vencido · Requiere pago</p>
+                                <div class="notif-time">ID: #00423</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCREEN: CLASES -->
+                <div class="screen" id="screen-clases">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Control de Clases</h2>
+
+                    <div class="glass-card" style="padding: 1rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid var(--card-border);">
+                            <div>
+                                <h4 style="font-size: 0.95rem;">Crossfit</h4>
+                                <p style="color: var(--text-muted); font-size: 0.8rem;">08:00 - 09:00</p>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--success);">12/15 Cupos</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid var(--card-border);">
+                            <div>
+                                <h4 style="font-size: 0.95rem;">Spinning</h4>
+                                <p style="color: var(--text-muted); font-size: 0.8rem;">10:00 - 11:00</p>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--success);">8/20 Cupos</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem;">
+                            <div>
+                                <h4 style="font-size: 0.95rem;">Yoga</h4>
+                                <p style="color: var(--text-muted); font-size: 0.8rem;">18:00 - 19:00</p>
+                            </div>
+                            <span style="font-size: 0.85rem; color: var(--warning);">15/15 Lleno</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCREEN: FINANZAS -->
+                <div class="screen" id="screen-finanzas">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Resumen Financiero</h2>
+
+                    <div class="glass-card" style="text-align: center; margin-bottom: 1rem;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">INGRESOS DEL MES</p>
+                        <h3 style="font-size: 2rem; font-weight: 700; color: var(--primary);">$15,420</h3>
+                    </div>
+
+                    <div class="glass-card" style="margin-top: 1rem; padding: 1rem;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">RENDIMIENTO</p>
+                        <div style="height: 120px;">
+                            <canvas id="tradingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-top: 1rem;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Últimas Transacciones</p>
+                        <div style="font-size: 0.85rem; display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <span>Cobro Cuota - Martín G.</span>
+                            <span style="color: var(--success);">+$12,500</span>
+                        </div>
+                        <div style="font-size: 0.85rem; display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span>Compra Mancuernas</span>
+                            <span style="color: var(--danger);">-$2,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="switchScreen('scan', this)">
+                <i class="ti ti-qrcode"></i>
+                <span>Escanear</span>
+            </button>
+            <button class="nav-item" onclick="switchScreen('socios', this)">
+                <i class="ti ti-users"></i>
+                <span>Socios</span>
+            </button>
+            <button class="nav-item" onclick="switchScreen('clases', this)">
+                <i class="ti ti-calendar"></i>
+                <span>Clases</span>
+            </button>
+            <button class="nav-item" onclick="switchScreen('finanzas', this)">
+                <i class="ti ti-currency-dollar"></i>
+                <span>Finanzas</span>
+            </button>
+        </div>
+    </div>
+    <script>
+        let tradingChart;
+
+        function switchScreen(screenId, btn) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // Deactivate all nav items
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            // Show target screen
+            document.getElementById('screen-' + screenId).classList.add('active');
+            // Activate target nav item
+            if (btn) btn.classList.add('active');
+
+            // Init chart if switching to finanzas
+            if (screenId === 'finanzas') {
+                setTimeout(initTradingChart, 100);
+            }
+        }
+
+        function initTradingChart() {
+            if (tradingChart) return; // Only init once
+            const ctx = document.getElementById('tradingChart').getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 120);
+            gradient.addColorStop(0, 'rgba(163, 230, 53, 0.3)');
+            gradient.addColorStop(1, 'rgba(163, 230, 53, 0)');
+
+            tradingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Ingresos',
+                        data: [1200, 1900, 1500, 2500, 2200, 4000, 3500],
+                        borderColor: '#A3E635',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            display: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#6b7280', font: { size: 10 } }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: '#6b7280', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#1f2937',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
+        }
+
+        function simulateScan() {
+            alert('¡Código QR Escaneado con Éxito!\nSocio: Martín García\nEstado: Al día');
+            switchScreen('socios', document.querySelectorAll('.nav-item')[1]); // Switch to Socios screen
+        }
+    </script>
+</body>
+</html>

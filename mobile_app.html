@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -147,8 +148,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Header / Profile */
@@ -241,7 +249,8 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding-bottom: 10px; /* Safe area simulation */
+            padding-bottom: 10px;
+            /* Safe area simulation */
         }
 
         .nav-item {
@@ -283,7 +292,7 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -315,10 +324,10 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
             margin-bottom: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .class-info h4 {
@@ -348,10 +357,44 @@
         }
 
         /* Hide scrollbar */
-        .app-content::-webkit-scrollbar { display: none; }
-        .app-content { -ms-overflow-style: none; scrollbar-width: none; }
+        .app-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .app-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Responsive for Real Mobile Devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                overflow: hidden;
+            }
+            .phone-frame {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+            .phone-notch {
+                display: none;
+            }
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+                z-index: 30;
+                background: rgba(0,0,0,0.5);
+                padding: 0.5rem;
+                border-radius: 50%;
+            }
+            .back-btn span { display: none; } /* Hide text, keep icon */
+        }
     </style>
 </head>
+
 <body>
 
     <a href="index.html" class="back-btn">
@@ -361,7 +404,7 @@
     <!-- PHONE FRAME -->
     <div class="phone-frame">
         <div class="phone-notch"></div>
-        
+
         <div class="phone-screen">
             <!-- STATUS BAR -->
             <div class="status-bar">
@@ -374,7 +417,7 @@
 
             <!-- APP CONTENT -->
             <div class="app-content" id="app-content">
-                
+
                 <!-- SCREEN: HOME -->
                 <div class="screen active" id="screen-home">
                     <!-- User Profile -->
@@ -395,7 +438,8 @@
                             <div>
                                 <p class="card-title" style="margin-bottom: 0.25rem;">Cuota de Mayo</p>
                                 <h3 style="font-size: 1.5rem; font-weight: 700;">$12.500</h3>
-                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Vence: 31/05/2026</p>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Vence:
+                                    31/05/2026</p>
                             </div>
                             <span class="badge"><i class="ti ti-check" style="margin-right: 0.25rem;"></i> Al día</span>
                         </div>
@@ -407,34 +451,35 @@
                         <div class="qr-box">
                             <!-- Simple SVG QR simulation -->
                             <svg viewBox="0 0 100 100">
-                                <rect x="0" y="0" width="30" height="30" fill="#000"/>
-                                <rect x="5" y="5" width="20" height="20" fill="#fff"/>
-                                <rect x="10" y="10" width="10" height="10" fill="#000"/>
-                                
-                                <rect x="70" y="0" width="30" height="30" fill="#000"/>
-                                <rect x="75" y="5" width="20" height="20" fill="#fff"/>
-                                <rect x="80" y="10" width="10" height="10" fill="#000"/>
-                                
-                                <rect x="0" y="70" width="30" height="30" fill="#000"/>
-                                <rect x="5" y="75" width="20" height="20" fill="#fff"/>
-                                <rect x="10" y="80" width="10" height="10" fill="#000"/>
-                                
-                                <rect x="35" y="5" width="10" height="10" fill="#000"/>
-                                <rect x="50" y="15" width="15" height="10" fill="#000"/>
-                                <rect x="35" y="30" width="30" height="5" fill="#000"/>
-                                <rect x="5" y="35" width="10" height="10" fill="#000"/>
-                                <rect x="20" y="45" width="10" height="15" fill="#000"/>
-                                <rect x="35" y="45" width="5" height="20" fill="#000"/>
-                                <rect x="45" y="45" width="20" height="10" fill="#000"/>
-                                <rect x="75" y="35" width="15" height="15" fill="#000"/>
-                                <rect x="70" y="55" width="10" height="10" fill="#000"/>
-                                <rect x="85" y="60" width="10" height="15" fill="#000"/>
-                                <rect x="35" y="75" width="20" height="10" fill="#000"/>
-                                <rect x="60" y="75" width="10" height="5" fill="#000"/>
-                                <rect x="60" y="85" width="25" height="10" fill="#000"/>
+                                <rect x="0" y="0" width="30" height="30" fill="#000" />
+                                <rect x="5" y="5" width="20" height="20" fill="#fff" />
+                                <rect x="10" y="10" width="10" height="10" fill="#000" />
+
+                                <rect x="70" y="0" width="30" height="30" fill="#000" />
+                                <rect x="75" y="5" width="20" height="20" fill="#fff" />
+                                <rect x="80" y="10" width="10" height="10" fill="#000" />
+
+                                <rect x="0" y="70" width="30" height="30" fill="#000" />
+                                <rect x="5" y="75" width="20" height="20" fill="#fff" />
+                                <rect x="10" y="80" width="10" height="10" fill="#000" />
+
+                                <rect x="35" y="5" width="10" height="10" fill="#000" />
+                                <rect x="50" y="15" width="15" height="10" fill="#000" />
+                                <rect x="35" y="30" width="30" height="5" fill="#000" />
+                                <rect x="5" y="35" width="10" height="10" fill="#000" />
+                                <rect x="20" y="45" width="10" height="15" fill="#000" />
+                                <rect x="35" y="45" width="5" height="20" fill="#000" />
+                                <rect x="45" y="45" width="20" height="10" fill="#000" />
+                                <rect x="75" y="35" width="15" height="15" fill="#000" />
+                                <rect x="70" y="55" width="10" height="10" fill="#000" />
+                                <rect x="85" y="60" width="10" height="15" fill="#000" />
+                                <rect x="35" y="75" width="20" height="10" fill="#000" />
+                                <rect x="60" y="75" width="10" height="5" fill="#000" />
+                                <rect x="60" y="85" width="25" height="10" fill="#000" />
                             </svg>
                         </div>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Escaneá en la entrada para ingresar</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Escaneá en la
+                            entrada para ingresar</p>
                     </div>
                 </div>
 
@@ -466,7 +511,8 @@
                                 <p><i class="ti ti-clock"></i> 11:00 - 12:00</p>
                                 <p><i class="ti ti-users"></i> Lleno</p>
                             </div>
-                            <button class="btn-reserve" style="background:#4b5563; color:#fff; cursor:not-allowed;" disabled>Lleno</button>
+                            <button class="btn-reserve" style="background:#4b5563; color:#fff; cursor:not-allowed;"
+                                disabled>Lleno</button>
                         </div>
                     </div>
                 </div>
@@ -474,7 +520,7 @@
                 <!-- SCREEN: NOTIFICATIONS -->
                 <div class="screen" id="screen-notifs">
                     <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Avisos</h2>
-                    
+
                     <div class="glass-card" style="padding: 0;">
                         <div class="notif-item">
                             <div class="notif-icon"><i class="ti ti-bell-ringing"></i></div>
@@ -485,7 +531,8 @@
                             </div>
                         </div>
                         <div class="notif-item">
-                            <div class="notif-icon" style="color: var(--success);"><i class="ti ti-circle-check"></i></div>
+                            <div class="notif-icon" style="color: var(--success);"><i class="ti ti-circle-check"></i>
+                            </div>
                             <div class="notif-content">
                                 <h4>Pago Confirmado</h4>
                                 <p>Tu pago de la cuota de Mayo ha sido procesado con éxito.</p>
@@ -493,7 +540,8 @@
                             </div>
                         </div>
                         <div class="notif-item">
-                            <div class="notif-icon" style="color: var(--warning);"><i class="ti ti-alert-triangle"></i></div>
+                            <div class="notif-icon" style="color: var(--warning);"><i class="ti ti-alert-triangle"></i>
+                            </div>
                             <div class="notif-content">
                                 <h4>Mantenimiento</h4>
                                 <p>El área de piletas estará cerrada por mantenimiento este viernes.</p>
@@ -506,9 +554,11 @@
                 <!-- SCREEN: PROFILE -->
                 <div class="screen" id="screen-profile">
                     <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Mi Perfil</h2>
-                    
+
                     <div class="glass-card" style="text-align: center; padding: 1.5rem;">
-                        <div class="avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 600;">MG</div>
+                        <div class="avatar"
+                            style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 600;">
+                            MG</div>
                         <h3 style="font-size: 1.2rem; font-weight: 700;">Martín García</h3>
                         <p style="font-size: 0.9rem; color: var(--text-muted);">Socio #00421</p>
                         <div style="margin-top: 0.5rem;"><span class="badge">Plan Mensual</span></div>
@@ -529,6 +579,7 @@
                                 <p>Editar datos personales, notificaciones.</p>
                             </div>
                         </div>
+
                         <div class="notif-item" style="color: var(--danger);">
                             <div class="notif-icon" style="color: var(--danger);"><i class="ti ti-logout"></i></div>
                             <div class="notif-content">
@@ -538,6 +589,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
             </div>
 
@@ -569,7 +622,7 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             // Deactivate all nav items
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
+
             // Show target screen
             document.getElementById('screen-' + screenId).classList.add('active');
             // Activate target nav item
@@ -577,4 +630,5 @@
         }
     </script>
 </body>
+
 </html>
