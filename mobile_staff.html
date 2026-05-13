@@ -62,17 +62,17 @@
 
         /* Phone Frame */
         .phone-frame {
-            width: 360px;
-            height: 740px;
-            background: #000;
-            border-radius: 44px;
-            padding: 12px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            width: 100vw;
+            height: 100vh;
+            background: var(--phone-bg);
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Notch / Dynamic Island simulation */
         .phone-notch {
+            display: none; /* Hidden on mobile */
             width: 120px;
             height: 30px;
             background: #000;
@@ -82,7 +82,6 @@
             transform: translateX(-50%);
             border-radius: 20px;
             z-index: 20;
-            display: flex;
             align-items: center;
             justify-content: center;
         }
@@ -295,39 +294,35 @@
             scrollbar-width: none;
         }
 
-        /* Responsive for Real Mobile Devices */
-        @media (max-width: 480px) {
+        /* Desktop Simulation Override */
+        @media (min-width: 500px) {
             body {
-                padding: 0;
+                padding: 2rem;
+            }
+            .phone-frame {
+                width: 360px;
+                height: 740px;
+                background: #000;
+                border-radius: 44px;
+                padding: 12px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+                position: relative;
+            }
+            .phone-screen {
+                border-radius: 32px;
                 overflow: hidden;
             }
-
-            .phone-frame {
-                width: 100vw;
-                height: 100vh;
-                border-radius: 0;
-                padding: 0;
-                box-shadow: none;
-            }
-
             .phone-notch {
-                display: none;
+                display: flex;
             }
-
             .back-btn {
-                top: 1rem;
-                left: 1rem;
-                z-index: 30;
-                background: rgba(0, 0, 0, 0.5);
-                padding: 0.5rem;
-                border-radius: 50%;
+                top: 2rem;
+                left: 2rem;
+                background: none;
+                padding: 0;
+                border-radius: 0;
             }
-
-            .back-btn span {
-                display: none;
-            }
-
-            /* Hide text, keep icon */
+            .back-btn span { display: inline; }
         }
     </style>
 </head>
