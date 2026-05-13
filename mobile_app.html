@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Pro - App Socio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --phone-bg: #111827;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #A3E635;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Back to Hub Button */
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 360px;
+            height: 740px;
+            background: #000;
+            border-radius: 44px;
+            padding: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        /* Notch / Dynamic Island simulation */
+        .phone-notch {
+            width: 120px;
+            height: 30px;
+            background: #000;
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 20px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-notch::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: absolute;
+            right: 20px;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: var(--phone-bg);
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #fff;
+            z-index: 10;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Content Area */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Screens (Hidden by default except active) */
+        .screen {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header / Profile */
+        .user-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .user-plan {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Cards */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.25rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        /* QR Section */
+        .qr-box {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .qr-box svg {
+            width: 140px;
+            height: 140px;
+        }
+
+        /* Status Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(163, 230, 53, 0.1);
+            color: var(--primary);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            height: 70px;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 10px; /* Safe area simulation */
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+        }
+
+        /* Notification Item */
+        .notif-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .notif-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notif-content p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .notif-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Class Card */
+        .class-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .class-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .class-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .btn-reserve {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-reserve:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hide scrollbar */
+        .app-content::-webkit-scrollbar { display: none; }
+        .app-content { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">
+        <i class="ti ti-arrow-left"></i> Volver al Hub
+    </a>
+
+    <!-- PHONE FRAME -->
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+        
+        <div class="phone-screen">
+            <!-- STATUS BAR -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <i class="ti ti-wifi"></i>
+                    <i class="ti ti-battery-filled"></i>
+                </div>
+            </div>
+
+            <!-- APP CONTENT -->
+            <div class="app-content" id="app-content">
+                
+                <!-- SCREEN: HOME -->
+                <div class="screen active" id="screen-home">
+                    <!-- User Profile -->
+                    <div class="user-header">
+                        <div class="user-info">
+                            <div class="avatar">MG</div>
+                            <div>
+                                <div class="user-name">Martín García</div>
+                                <div class="user-plan">Socio #00421 · Plan Mensual</div>
+                            </div>
+                        </div>
+                        <i class="ti ti-bell" style="font-size: 1.2rem; color: var(--text-muted);"></i>
+                    </div>
+
+                    <!-- Quota Status -->
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p class="card-title" style="margin-bottom: 0.25rem;">Cuota de Mayo</p>
+                                <h3 style="font-size: 1.5rem; font-weight: 700;">$12.500</h3>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Vence: 31/05/2026</p>
+                            </div>
+                            <span class="badge"><i class="ti ti-check" style="margin-right: 0.25rem;"></i> Al día</span>
+                        </div>
+                    </div>
+
+                    <!-- Access QR -->
+                    <div class="glass-card" style="text-align: center;">
+                        <p class="card-title">Código de Ingreso</p>
+                        <div class="qr-box">
+                            <!-- Simple SVG QR simulation -->
+                            <svg viewBox="0 0 100 100">
+                                <rect x="0" y="0" width="30" height="30" fill="#000"/>
+                                <rect x="5" y="5" width="20" height="20" fill="#fff"/>
+                                <rect x="10" y="10" width="10" height="10" fill="#000"/>
+                                
+                                <rect x="70" y="0" width="30" height="30" fill="#000"/>
+                                <rect x="75" y="5" width="20" height="20" fill="#fff"/>
+                                <rect x="80" y="10" width="10" height="10" fill="#000"/>
+                                
+                                <rect x="0" y="70" width="30" height="30" fill="#000"/>
+                                <rect x="5" y="75" width="20" height="20" fill="#fff"/>
+                                <rect x="10" y="80" width="10" height="10" fill="#000"/>
+                                
+                                <rect x="35" y="5" width="10" height="10" fill="#000"/>
+                                <rect x="50" y="15" width="15" height="10" fill="#000"/>
+                                <rect x="35" y="30" width="30" height="5" fill="#000"/>
+                                <rect x="5" y="35" width="10" height="10" fill="#000"/>
+                                <rect x="20" y="45" width="10" height="15" fill="#000"/>
+                                <rect x="35" y="45" width="5" height="20" fill="#000"/>
+                                <rect x="45" y="45" width="20" height="10" fill="#000"/>
+                                <rect x="75" y="35" width="15" height="15" fill="#000"/>
+                                <rect x="70" y="55" width="10" height="10" fill="#000"/>
+                                <rect x="85" y="60" width="10" height="15" fill="#000"/>
+                                <rect x="35" y="75" width="20" height="10" fill="#000"/>
+                                <rect x="60" y="75" width="10" height="5" fill="#000"/>
+                                <rect x="60" y="85" width="25" height="10" fill="#000"/>
+                            </svg>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Escaneá en la entrada para ingresar</p>
+                    </div>
+                </div>
+
+                <!-- SCREEN: CLASSES -->
+                <div class="screen" id="screen-classes">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Clases Disponibles</h2>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Reservá tu lugar para hoy</p>
+
+                    <div class="glass-card" style="padding: 1rem;">
+                        <div class="class-card">
+                            <div class="class-info">
+                                <h4>Crossfit</h4>
+                                <p><i class="ti ti-clock"></i> 08:00 - 09:00</p>
+                                <p><i class="ti ti-users"></i> 12/15 cupos</p>
+                            </div>
+                            <button class="btn-reserve">Reservar</button>
+                        </div>
+                        <div class="class-card">
+                            <div class="class-info">
+                                <h4>Spinning</h4>
+                                <p><i class="ti ti-clock"></i> 10:00 - 11:00</p>
+                                <p><i class="ti ti-users"></i> 8/20 cupos</p>
+                            </div>
+                            <button class="btn-reserve">Reservar</button>
+                        </div>
+                        <div class="class-card" style="opacity: 0.5;">
+                            <div class="class-info">
+                                <h4>Yoga</h4>
+                                <p><i class="ti ti-clock"></i> 11:00 - 12:00</p>
+                                <p><i class="ti ti-users"></i> Lleno</p>
+                            </div>
+                            <button class="btn-reserve" style="background:#4b5563; color:#fff; cursor:not-allowed;" disabled>Lleno</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCREEN: NOTIFICATIONS -->
+                <div class="screen" id="screen-notifs">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Avisos</h2>
+                    
+                    <div class="glass-card" style="padding: 0;">
+                        <div class="notif-item">
+                            <div class="notif-icon"><i class="ti ti-bell-ringing"></i></div>
+                            <div class="notif-content">
+                                <h4>¡Recordatorio de Clase!</h4>
+                                <p>Tenés una reserva para Crossfit hoy a las 18:00 hs. ¡No faltes!</p>
+                                <div class="notif-time">Hace 2 horas</div>
+                            </div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-icon" style="color: var(--success);"><i class="ti ti-circle-check"></i></div>
+                            <div class="notif-content">
+                                <h4>Pago Confirmado</h4>
+                                <p>Tu pago de la cuota de Mayo ha sido procesado con éxito.</p>
+                                <div class="notif-time">Ayer</div>
+                            </div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-icon" style="color: var(--warning);"><i class="ti ti-alert-triangle"></i></div>
+                            <div class="notif-content">
+                                <h4>Mantenimiento</h4>
+                                <p>El área de piletas estará cerrada por mantenimiento este viernes.</p>
+                                <div class="notif-time">Hace 3 días</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCREEN: PROFILE -->
+                <div class="screen" id="screen-profile">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">Mi Perfil</h2>
+                    
+                    <div class="glass-card" style="text-align: center; padding: 1.5rem;">
+                        <div class="avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 600;">MG</div>
+                        <h3 style="font-size: 1.2rem; font-weight: 700;">Martín García</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Socio #00421</p>
+                        <div style="margin-top: 0.5rem;"><span class="badge">Plan Mensual</span></div>
+                    </div>
+
+                    <div class="glass-card" style="padding: 0;">
+                        <div class="notif-item">
+                            <div class="notif-icon"><i class="ti ti-credit-card"></i></div>
+                            <div class="notif-content">
+                                <h4>Método de Pago</h4>
+                                <p>Tarjeta terminada en **** 4321</p>
+                            </div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-icon"><i class="ti ti-settings"></i></div>
+                            <div class="notif-content">
+                                <h4>Configuración</h4>
+                                <p>Editar datos personales, notificaciones.</p>
+                            </div>
+                        </div>
+                        <div class="notif-item" style="color: var(--danger);">
+                            <div class="notif-icon" style="color: var(--danger);"><i class="ti ti-logout"></i></div>
+                            <div class="notif-content">
+                                <h4 style="color: var(--danger);">Cerrar Sesión</h4>
+                                <p style="color: var(--danger);">Salir de la aplicación</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM NAV -->
+            <div class="bottom-nav">
+                <button class="nav-item active" onclick="switchScreen('home', this)">
+                    <i class="ti ti-home"></i>
+                    <span>Inicio</span>
+                </button>
+                <button class="nav-item" onclick="switchScreen('classes', this)">
+                    <i class="ti ti-calendar"></i>
+                    <span>Clases</span>
+                </button>
+                <button class="nav-item" onclick="switchScreen('notifs', this)">
+                    <i class="ti ti-bell"></i>
+                    <span>Avisos</span>
+                </button>
+                <button class="nav-item" onclick="switchScreen('profile', this)">
+                    <i class="ti ti-user"></i>
+                    <span>Perfil</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchScreen(screenId, btn) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // Deactivate all nav items
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            // Show target screen
+            document.getElementById('screen-' + screenId).classList.add('active');
+            // Activate target nav item
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>

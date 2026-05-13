@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Pro - Dashboard Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --sidebar-bg: #030712;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --primary: #A3E635;
+            --primary-glow: rgba(163, 230, 53, 0.2);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links li.active a {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-links li.active a {
+            border-left: 3px solid var(--primary);
+            border-radius: 4px 12px 12px 4px;
+            padding-left: calc(1rem - 3px);
+            color: var(--primary);
+        }
+
+        .nav-links i {
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Topbar */
+        .topbar {
+            height: 70px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .topbar h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Content Area */
+        .content-grid {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Metrics */
+        .metric-card {
+            grid-column: span 3;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .metric-change.up { color: var(--success); }
+        .metric-change.down { color: var(--danger); }
+
+        /* Chart Area */
+        .chart-card {
+            grid-column: span 8;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Gauge / Info Area */
+        .info-card {
+            grid-column: span 4;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Table Area */
+        .table-card {
+            grid-column: span 12;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.active { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .status-badge.debt { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+        /* Search input */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            color: #fff;
+            font-size: 0.9rem;
+            width: 250px;
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="ti ti-barbell"></i> GymPro
+        </div>
+        <ul class="nav-links">
+            <li class="active" id="nav-dashboard"><a href="#" onclick="switchScreen('dashboard', this)"><i class="ti ti-dashboard"></i> Dashboard</a></li>
+            <li id="nav-socios"><a href="#" onclick="switchScreen('socios', this)"><i class="ti ti-users"></i> Socios</a></li>
+            <li id="nav-clases"><a href="#" onclick="switchScreen('clases', this)"><i class="ti ti-calendar"></i> Clases</a></li>
+            <li id="nav-finanzas"><a href="#" onclick="switchScreen('finanzas', this)"><i class="ti ti-currency-dollar"></i> Finanzas</a></li>
+            <li id="nav-configuracion"><a href="#" onclick="switchScreen('configuracion', this)"><i class="ti ti-settings"></i> Configuración</a></li>
+            <li><a href="index.html" style="margin-top: auto; color: var(--danger);"><i class="ti ti-logout"></i> Volver al Hub</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <h1>Panel de Control</h1>
+            <div class="user-profile">
+                <div class="user-profile">
+                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Admin</span>
+                    <div class="avatar">A</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT GRID / SCREEN: DASHBOARD -->
+        <div class="content-grid screen" id="screen-dashboard">
+            <!-- METRICS -->
+            <div class="metric-card">
+                <div class="metric-title">Socios Totales</div>
+                <div class="metric-value">1,248</div>
+                <div class="metric-change up"><i class="ti ti-arrow-narrow-up"></i> 12% este mes</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Gente en el Gym</div>
+                <div class="metric-value">8</div>
+                <div class="metric-change down"><i class="ti ti-users"></i> En vivo</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Clase en Curso</div>
+                <div class="metric-value">Yoga</div>
+                <div class="metric-change up">18:00 - 19:00</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Ingresos Hoy</div>
+                <div class="metric-value">$1,200</div>
+                <div class="metric-change up"><i class="ti ti-arrow-narrow-up"></i> +5% vs ayer</div>
+            </div>
+
+            <!-- LIVE ACTIVITY -->
+            <div class="chart-card" style="grid-column: span 8;">
+                <div class="chart-header">
+                    <div class="chart-title">Actividad en Vivo y Accesos</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 10px; height: 10px; background: var(--success); border-radius: 50%;"></div>
+                            <div>
+                                <h4 style="font-size: 0.95rem;">Ingreso: Martín García</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem;">Hace 2 minutos · Puerta Principal</p>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">08:42</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 10px; height: 10px; background: var(--success); border-radius: 50%;"></div>
+                            <div>
+                                <h4 style="font-size: 0.95rem;">Ingreso: Ana Ramírez</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem;">Hace 15 minutos · Puerta Principal</p>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">08:29</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 10px; height: 10px; background: var(--warning); border-radius: 50%;"></div>
+                            <div>
+                                <h4 style="font-size: 0.95rem;">Salida: Carlos Pérez</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem;">Hace 20 minutos · Puerta Principal</p>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">08:24</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAUGE / CAPACIDAD -->
+            <div class="info-card">
+                <div class="chart-title">Ocupación Actual</div>
+                <div style="width: 150px; height: 150px; position: relative;">
+                    <svg width="150" height="150" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.05)" stroke-width="10" fill="none" />
+                        <circle cx="50" cy="50" r="40" stroke="url(#primaryGradient)" stroke-width="10" fill="none" 
+                                stroke-dasharray="251.2" stroke-dashoffset="231" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                        <defs>
+                            <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#A3E635" />
+                                <stop offset="100%" stop-color="#4ade80" />
+                            </linearGradient>
+                        </defs>
+                        <text x="50" y="55" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">8%</text>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">8 de 100 personas</p>
+                    <p style="font-size: 0.8rem; color: var(--success); font-weight: 600;">Estado: Muy Bajo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: FINANZAS -->
+        <div class="content-grid screen" id="screen-finanzas" style="display: none;">
+            <!-- METRICS -->
+            <div class="metric-card" style="grid-column: span 4;">
+                <div class="metric-title">Ingresos Totales (Mes)</div>
+                <div class="metric-value">$15,420</div>
+                <div class="metric-change up"><i class="ti ti-arrow-narrow-up"></i> 8% vs mes anterior</div>
+            </div>
+            <div class="metric-card" style="grid-column: span 4;">
+                <div class="metric-title">Gastos Totales (Mes)</div>
+                <div class="metric-value">$4,200</div>
+                <div class="metric-change down"><i class="ti ti-arrow-narrow-down"></i> 3% en equipamiento</div>
+            </div>
+            <div class="metric-card" style="grid-column: span 4;">
+                <div class="metric-title">Balance Neto</div>
+                <div class="metric-value" style="color: var(--success);">$11,220</div>
+                <div class="metric-change up">Positivo</div>
+            </div>
+
+            <!-- CHART (Income vs Expenses) -->
+            <div class="chart-card" style="grid-column: span 12;">
+                <div class="chart-header">
+                    <div class="chart-title">Estadísticas Financieras (6 Meses)</div>
+                </div>
+                <div style="height: 300px;">
+                    <canvas id="financialChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: SOCIOS -->
+        <div class="content-grid screen" id="screen-socios" style="display: none;">
+            <div class="table-card" style="grid-column: span 12;">
+                <div class="table-header">
+                    <div class="chart-title">Gestión de Socios</div>
+                    <div class="search-box">
+                        <i class="ti ti-search"></i>
+                        <input type="text" placeholder="Buscar socio...">
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Socio</th>
+                            <th>Plan</th>
+                            <th>Vencimiento</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Ana Ramírez</td><td>Musculación (Anual)</td><td>12/12/2026</td><td><span class="status-badge active">Al día</span></td><td><button style="background:none; border:none; color:var(--primary); cursor:pointer;">Ver detalles</button></td></tr>
+                        <tr><td>Carlos Pérez</td><td>Crossfit (Mensual)</td><td>30/05/2026</td><td><span class="status-badge active">Al día</span></td><td><button style="background:none; border:none; color:var(--primary); cursor:pointer;">Ver detalles</button></td></tr>
+                        <tr><td>Laura Méndez</td><td>Spinning (Mensual)</td><td>10/05/2026</td><td><span class="status-badge debt">Adeuda</span></td><td><button style="background:none; border:none; color:var(--warning); cursor:pointer;">Notificar</button></td></tr>
+                        <tr><td>Roberto Gómez</td><td>Musculación (Mensual)</td><td>05/06/2026</td><td><span class="status-badge active">Al día</span></td><td><button style="background:none; border:none; color:var(--primary); cursor:pointer;">Ver detalles</button></td></tr>
+                        <tr><td>Lucía Fernández</td><td>Yoga (Mensual)</td><td>20/05/2026</td><td><span class="status-badge active">Al día</span></td><td><button style="background:none; border:none; color:var(--primary); cursor:pointer;">Ver detalles</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SCREEN: CLASES -->
+        <div class="content-grid screen" id="screen-clases" style="display: none;">
+            <div class="chart-card" style="grid-column: span 12;">
+                <div class="chart-header">
+                    <div class="chart-title">Horarios de Clases</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div class="glass-card" style="padding: 1rem; border: 1px solid var(--card-border); border-radius: 12px;">
+                        <h4 style="font-size: 1.1rem; color: var(--primary);">Crossfit</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Lun, Mié, Vie</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">08:00 - 09:00</p>
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; color: var(--success);">12/15 Cupos</span>
+                            <button style="background: var(--primary); color: #000; border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">Gestionar</button>
+                        </div>
+                    </div>
+                    <div class="glass-card" style="padding: 1rem; border: 1px solid var(--card-border); border-radius: 12px;">
+                        <h4 style="font-size: 1.1rem; color: var(--primary);">Spinning</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Mar, Jue</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">10:00 - 11:00</p>
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; color: var(--success);">8/20 Cupos</span>
+                            <button style="background: var(--primary); color: #000; border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">Gestionar</button>
+                        </div>
+                    </div>
+                    <div class="glass-card" style="padding: 1rem; border: 1px solid var(--card-border); border-radius: 12px;">
+                        <h4 style="font-size: 1.1rem; color: var(--primary);">Yoga</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Lun, Mié</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">18:00 - 19:00</p>
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; color: var(--warning);">15/15 Cupos</span>
+                            <button style="background: #4b5563; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600;" disabled>Lleno</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: CONFIGURACION -->
+        <div class="content-grid screen" id="screen-configuracion" style="display: none;">
+            <div class="chart-card" style="grid-column: span 12;">
+                <div class="chart-header">
+                    <div class="chart-title">Configuración del Sistema</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                        <div>
+                            <h4 style="font-size: 1rem;">Modo Oscuro</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Activar o desactivar el tema oscuro.</p>
+                        </div>
+                        <div style="width: 50px; height: 25px; background: var(--primary); border-radius: 15px; position: relative; cursor: pointer;">
+                            <div style="width: 21px; height: 21px; background: #fff; border-radius: 50%; position: absolute; right: 2px; top: 2px;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                        <div>
+                            <h4 style="font-size: 1rem;">Notificaciones por Email</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Enviar avisos de vencimiento automáticamente.</p>
+                        </div>
+                        <div style="width: 50px; height: 25px; background: var(--primary); border-radius: 15px; position: relative; cursor: pointer;">
+                            <div style="width: 21px; height: 21px; background: #fff; border-radius: 50%; position: absolute; right: 2px; top: 2px;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="font-size: 1rem;">Backup de Datos</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Descargar una copia de seguridad de la base de datos.</p>
+                        </div>
+                        <button style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--card-border); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Descargar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Switch Screen Script -->
+    <script>
+        function switchScreen(screenId, btn) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => {
+                s.style.display = 'none';
+                s.classList.remove('active');
+            });
+            // Deactivate all nav items
+            document.querySelectorAll('.nav-links li').forEach(i => i.classList.remove('active'));
+            
+            // Show target screen
+            const targetScreen = document.getElementById('screen-' + screenId);
+            if (targetScreen) {
+                targetScreen.style.display = 'grid';
+                targetScreen.classList.add('active');
+                
+                // Trigger chart update if switching to finanzas
+                if (screenId === 'finanzas' && window.myChart) {
+                    setTimeout(() => window.myChart.update(), 100);
+                }
+            }
+            
+            // Activate target nav item
+            if (btn) {
+                btn.parentElement.classList.add('active');
+            }
+        }
+    </script>
+
+    <!-- Chart Script -->
+    <script>
+        const ctx = document.getElementById('financialChart').getContext('2d');
+        
+        // Custom gradient for Income line
+        const incomeGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        incomeGradient.addColorStop(0, 'rgba(163, 230, 53, 0.4)');
+        incomeGradient.addColorStop(1, 'rgba(163, 230, 53, 0)');
+
+        // Custom gradient for Expenses line
+        const expensesGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        expensesGradient.addColorStop(0, 'rgba(239, 68, 68, 0.3)');
+        expensesGradient.addColorStop(1, 'rgba(239, 68, 68, 0)');
+
+        window.myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Ingresos ($)',
+                        data: [12000, 13500, 11000, 14000, 15420, 16000],
+                        borderColor: '#A3E635',
+                        borderWidth: 3,
+                        backgroundColor: incomeGradient,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#A3E635',
+                        pointBorderColor: '#0b0f19',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Gastos Equipamiento / Mantenimiento ($)',
+                        data: [5000, 3000, 8000, 4000, 4200, 3500],
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        backgroundColor: expensesGradient,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0, // Less prominent points
+                        borderDash: [5, 5] // Dashed line for expenses
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#9ca3af',
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            font: { size: 12, family: "'Outfit', sans-serif" }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#030712',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: '#9ca3af',
+                        titleFont: { family: "'Outfit', sans-serif", weight: 'bold' },
+                        bodyFont: { family: "'Outfit', sans-serif" }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#9ca3af', font: { family: "'Outfit', sans-serif" } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#9ca3af', font: { family: "'Outfit', sans-serif" } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

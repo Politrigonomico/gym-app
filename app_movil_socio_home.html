@@ -1,0 +1,186 @@
+
+<style>
+  .phone-frame { background: #111; border-radius: 40px; padding: 12px; display: inline-block; box-shadow: 0 0 0 1px #333; }
+  .phone-screen { background: #1a1a1a; border-radius: 30px; width: 260px; overflow: hidden; font-family: var(--font-sans); }
+  .status-bar { display: flex; justify-content: space-between; padding: 10px 20px 4px; font-size: 10px; color: #888; }
+  .screen-section { padding: 0 16px 16px; }
+  .badge-active { background: #A3E635; color: #1a2e00; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+  .badge-debt { background: #F97316; color: #3a1500; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+  .section-label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .08em; margin: 12px 0 6px; }
+  .qr-box { background: #fff; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .qr-label { font-size: 10px; color: #555; }
+  .user-row { display: flex; align-items: center; gap: 10px; padding: 14px 0 8px; border-bottom: 0.5px solid #333; margin-bottom: 4px; }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: #A3E635; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: #1a2e00; flex-shrink: 0; }
+  .user-name { font-size: 14px; font-weight: 500; color: #fff; }
+  .user-sub { font-size: 10px; color: #888; }
+  .quota-card { background: #222; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; border: 0.5px solid #A3E63540; }
+  .quota-card.debt { border-color: #F9731640; }
+  .quota-row { display: flex; justify-content: space-between; align-items: center; }
+  .quota-title { font-size: 11px; color: #aaa; }
+  .quota-val { font-size: 18px; font-weight: 500; color: #fff; margin: 2px 0; }
+  .quota-date { font-size: 10px; color: #666; }
+  .notif-item { background: #222; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; border-left: 3px solid #F97316; display: flex; gap: 8px; align-items: flex-start; }
+  .notif-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .notif-title { font-size: 11px; font-weight: 500; color: #fff; }
+  .notif-sub { font-size: 10px; color: #888; margin-top: 2px; }
+  .nav-bar { background: #111; border-top: 0.5px solid #333; display: flex; justify-content: space-around; padding: 10px 8px 14px; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 9px; color: #555; }
+  .nav-item.active { color: #A3E635; }
+  .tab-row { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tab { font-size: 10px; padding: 4px 10px; border-radius: 20px; background: #333; color: #aaa; }
+  .tab.active { background: #A3E635; color: #1a2e00; font-weight: 500; }
+</style>
+
+<h2 class="sr-only">Wireframe de la app móvil del socio del gimnasio — pantalla de inicio y notificaciones</h2>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; padding: 1rem 0 1.5rem;">
+
+  <!-- PHONE 1: Inicio - Al día -->
+  <div>
+    <p style="font-size: 12px; color: var(--color-text-secondary); text-align:center; margin-bottom:8px;">Pantalla inicio — cuota al día</p>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div style="background:#111;padding:10px 20px 4px;display:flex;justify-content:space-between;">
+          <span style="font-size:10px;color:#888;">9:41</span>
+          <span style="font-size:10px;color:#888;"><i class="ti ti-wifi" aria-hidden="true"></i> <i class="ti ti-battery-2" aria-hidden="true"></i></span>
+        </div>
+        <!-- Header -->
+        <div class="screen-section">
+          <div class="user-row">
+            <div class="avatar">MG</div>
+            <div>
+              <div class="user-name">Martín García</div>
+              <div class="user-sub">Socio #00421 · Plan Mensual</div>
+            </div>
+          </div>
+
+          <!-- Estado cuota -->
+          <div class="section-label">Estado de cuota</div>
+          <div class="quota-card">
+            <div class="quota-row">
+              <div>
+                <div class="quota-title">Mayo 2026</div>
+                <div class="quota-val">$12.500</div>
+                <div class="quota-date">Vence: 31/05/2026</div>
+              </div>
+              <span class="badge-active">✓ Al día</span>
+            </div>
+          </div>
+
+          <!-- QR -->
+          <div class="section-label">Código de ingreso</div>
+          <div class="qr-box">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <!-- QR pattern simulado -->
+              <rect width="100" height="100" fill="#fff"/>
+              <!-- Corner markers -->
+              <rect x="4" y="4" width="28" height="28" rx="3" fill="#111"/>
+              <rect x="8" y="8" width="20" height="20" rx="2" fill="#fff"/>
+              <rect x="11" y="11" width="14" height="14" rx="1" fill="#111"/>
+              <rect x="68" y="4" width="28" height="28" rx="3" fill="#111"/>
+              <rect x="72" y="8" width="20" height="20" rx="2" fill="#fff"/>
+              <rect x="75" y="11" width="14" height="14" rx="1" fill="#111"/>
+              <rect x="4" y="68" width="28" height="28" rx="3" fill="#111"/>
+              <rect x="8" y="72" width="20" height="20" rx="2" fill="#fff"/>
+              <rect x="11" y="75" width="14" height="14" rx="1" fill="#111"/>
+              <!-- Data modules -->
+              <rect x="40" y="4" width="6" height="6" fill="#111"/><rect x="50" y="4" width="6" height="6" fill="#111"/><rect x="60" y="4" width="6" height="6" fill="#111"/>
+              <rect x="40" y="14" width="6" height="6" fill="#111"/><rect x="56" y="14" width="6" height="6" fill="#111"/>
+              <rect x="44" y="24" width="6" height="6" fill="#111"/><rect x="60" y="24" width="6" height="6" fill="#111"/>
+              <rect x="4" y="40" width="6" height="6" fill="#111"/><rect x="14" y="40" width="6" height="6" fill="#111"/><rect x="24" y="40" width="6" height="6" fill="#111"/>
+              <rect x="40" y="40" width="6" height="6" fill="#111"/><rect x="50" y="40" width="6" height="6" fill="#111"/><rect x="60" y="40" width="6" height="6" fill="#111"/><rect x="70" y="40" width="6" height="6" fill="#111"/><rect x="90" y="40" width="6" height="6" fill="#111"/>
+              <rect x="4" y="50" width="6" height="6" fill="#111"/><rect x="20" y="50" width="6" height="6" fill="#111"/><rect x="44" y="50" width="6" height="6" fill="#111"/><rect x="60" y="50" width="6" height="6" fill="#111"/><rect x="80" y="50" width="6" height="6" fill="#111"/>
+              <rect x="10" y="60" width="6" height="6" fill="#111"/><rect x="24" y="60" width="6" height="6" fill="#111"/><rect x="44" y="60" width="6" height="6" fill="#111"/><rect x="56" y="60" width="6" height="6" fill="#111"/><rect x="70" y="60" width="6" height="6" fill="#111"/><rect x="90" y="60" width="6" height="6" fill="#111"/>
+              <rect x="40" y="70" width="6" height="6" fill="#111"/><rect x="56" y="70" width="6" height="6" fill="#111"/><rect x="80" y="70" width="6" height="6" fill="#111"/>
+              <rect x="40" y="80" width="6" height="6" fill="#111"/><rect x="50" y="80" width="6" height="6" fill="#111"/><rect x="66" y="80" width="6" height="6" fill="#111"/><rect x="90" y="80" width="6" height="6" fill="#111"/>
+              <rect x="44" y="90" width="6" height="6" fill="#111"/><rect x="60" y="90" width="6" height="6" fill="#111"/><rect x="76" y="90" width="6" height="6" fill="#111"/>
+            </svg>
+            <div class="qr-label">Mostrá este código en el ingreso</div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="nav-bar">
+          <div class="nav-item active"><i class="ti ti-home" style="font-size:16px" aria-hidden="true"></i>Inicio</div>
+          <div class="nav-item"><i class="ti ti-calendar" style="font-size:16px" aria-hidden="true"></i>Clases</div>
+          <div class="nav-item"><i class="ti ti-bell" style="font-size:16px" aria-hidden="true"></i>Avisos</div>
+          <div class="nav-item"><i class="ti ti-user" style="font-size:16px" aria-hidden="true"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHONE 2: Notificaciones - Deuda -->
+  <div>
+    <p style="font-size: 12px; color: var(--color-text-secondary); text-align:center; margin-bottom:8px;">Pantalla notificaciones — deuda pendiente</p>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div style="background:#111;padding:10px 20px 4px;display:flex;justify-content:space-between;">
+          <span style="font-size:10px;color:#888;">9:41</span>
+          <span style="font-size:10px;color:#888;"><i class="ti ti-wifi" aria-hidden="true"></i></span>
+        </div>
+        <div class="screen-section">
+          <!-- Header -->
+          <div style="padding: 10px 0 12px; border-bottom: 0.5px solid #333; margin-bottom: 12px;">
+            <div style="font-size:16px;font-weight:500;color:#fff;">Notificaciones</div>
+            <div style="font-size:10px;color:#888;">3 sin leer</div>
+          </div>
+
+          <!-- Quota card DEUDA -->
+          <div class="quota-card debt">
+            <div class="quota-row">
+              <div>
+                <div class="quota-title">Abril 2026</div>
+                <div class="quota-val" style="color:#F97316;">$12.500</div>
+                <div class="quota-date">Venció: 30/04/2026</div>
+              </div>
+              <span class="badge-debt">⚠ Adeuda</span>
+            </div>
+            <div style="margin-top:10px;padding-top:8px;border-top:0.5px solid #444;">
+              <button style="width:100%;background:#F97316;color:#fff;border:none;border-radius:8px;padding:8px;font-size:11px;font-weight:500;cursor:pointer;">Pagar ahora</button>
+            </div>
+          </div>
+
+          <!-- Notif items -->
+          <div class="section-label">Recientes</div>
+
+          <div class="notif-item">
+            <div class="notif-icon">💰</div>
+            <div>
+              <div class="notif-title">Cuota vencida — Abril 2026</div>
+              <div class="notif-sub">Tu acceso puede verse restringido. Regularizá tu situación.</div>
+              <div class="notif-sub" style="color:#F97316;margin-top:3px;">Hace 2 días</div>
+            </div>
+          </div>
+
+          <div class="notif-item" style="border-left-color:#555;">
+            <div class="notif-icon">📅</div>
+            <div>
+              <div class="notif-title">Clase de spinning — mañana 07:00</div>
+              <div class="notif-sub">Recordatorio: tenés lugar reservado.</div>
+              <div class="notif-sub" style="margin-top:3px;color:#888;">Hace 5 horas</div>
+            </div>
+          </div>
+
+          <div class="notif-item" style="border-left-color:#A3E635;">
+            <div class="notif-icon">✅</div>
+            <div>
+              <div class="notif-title">Ingreso registrado</div>
+              <div class="notif-sub">Hoy a las 08:14 — Puerta principal</div>
+              <div class="notif-sub" style="margin-top:3px;color:#888;">Hace 1 hora</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="nav-bar">
+          <div class="nav-item"><i class="ti ti-home" style="font-size:16px" aria-hidden="true"></i>Inicio</div>
+          <div class="nav-item"><i class="ti ti-calendar" style="font-size:16px" aria-hidden="true"></i>Clases</div>
+          <div class="nav-item active"><i class="ti ti-bell" style="font-size:16px" aria-hidden="true"></i>Avisos</div>
+          <div class="nav-item"><i class="ti ti-user" style="font-size:16px" aria-hidden="true"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

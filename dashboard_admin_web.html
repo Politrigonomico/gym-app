@@ -1,0 +1,238 @@
+
+<style>
+  .dash { font-family: var(--font-sans); background: var(--color-background-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .sidebar { background: #111; width: 180px; flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 0 16px 20px; font-size: 15px; font-weight: 500; color: #A3E635; border-bottom: 0.5px solid #333; margin-bottom: 12px; }
+  .sidebar-item { padding: 9px 16px; font-size: 12px; color: #888; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: background .15s; border-left: 3px solid transparent; }
+  .sidebar-item:hover { background: #1a1a1a; color: #ddd; }
+  .sidebar-item.active { color: #A3E635; border-left-color: #A3E635; background: #1a1a1a; }
+  .main { flex: 1; overflow: hidden; }
+  .topbar { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .topbar-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .content { padding: 16px 20px; overflow: auto; }
+  .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .metric-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+  .metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 10px; color: var(--color-text-secondary); margin-top: 2px; }
+  .metric-val.green { color: #4ade80; }
+  .metric-val.orange { color: #F97316; }
+  .panels-row { display: flex; gap: 12px; }
+  .table-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); flex: 1; overflow: hidden; min-width: 0; }
+  .gauge-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); width: 200px; flex-shrink: 0; padding: 14px; }
+  .panel-header { padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .filter-tabs { display: flex; gap: 4px; }
+  .ftab { font-size: 10px; padding: 3px 9px; border-radius: 20px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); cursor: pointer; background: transparent; transition: all .15s; }
+  .ftab:hover { background: var(--color-background-secondary); }
+  .ftab.active { background: #A3E635; color: #1a2e00; border-color: #A3E635; font-weight: 500; }
+  .ftab.orange-tab.active { background: #F97316; color: #fff; border-color: #F97316; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th { padding: 8px 14px; font-size: 10px; color: var(--color-text-secondary); text-align: left; font-weight: 500; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+  td { padding: 9px 14px; font-size: 11px; color: var(--color-text-primary); border-bottom: 0.5px solid var(--color-border-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--color-background-secondary); }
+  .badge { font-size: 9px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+  .badge-ok { background: #dcfce7; color: #166534; }
+  .badge-debt { background: #ffedd5; color: #9a3412; }
+  .badge-new { background: #dbeafe; color: #1e40af; }
+  @media (prefers-color-scheme: dark) {
+    .badge-ok { background: #14532d; color: #86efac; }
+    .badge-debt { background: #7c2d12; color: #fdba74; }
+    .badge-new { background: #1e3a5f; color: #93c5fd; }
+  }
+  .search-input { font-size: 11px; padding: 5px 10px; border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-primary); width: 140px; }
+  .gauge-label { font-size: 11px; color: var(--color-text-secondary); text-align: center; margin-bottom: 8px; }
+  .gauge-center { font-size: 24px; font-weight: 500; color: var(--color-text-primary); text-align: center; }
+  .gauge-sub { font-size: 10px; color: var(--color-text-secondary); text-align: center; }
+  .gauge-legend { margin-top: 12px; font-size: 10px; color: var(--color-text-secondary); }
+  .gauge-row { display: flex; justify-content: space-between; margin-top: 4px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #A3E635; display: inline-block; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .live-label { font-size: 10px; color: #A3E635; display: flex; align-items: center; gap: 4px; }
+</style>
+
+<h2 class="sr-only">Dashboard web del administrador del gimnasio — tabla de socios y widget de aforo en tiempo real</h2>
+
+<div class="dash" style="display:flex; height:480px;">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo"><i class="ti ti-barbell" aria-hidden="true"></i> GymAdmin</div>
+    <div class="sidebar-item active"><i class="ti ti-users" aria-hidden="true"></i> Socios</div>
+    <div class="sidebar-item"><i class="ti ti-calendar-event" aria-hidden="true"></i> Clases</div>
+    <div class="sidebar-item"><i class="ti ti-currency-dollar" aria-hidden="true"></i> Pagos</div>
+    <div class="sidebar-item"><i class="ti ti-door-enter" aria-hidden="true"></i> Ingresos</div>
+    <div class="sidebar-item"><i class="ti ti-chart-bar" aria-hidden="true"></i> Reportes</div>
+    <div class="sidebar-item" style="margin-top:auto;"><i class="ti ti-settings" aria-hidden="true"></i> Ajustes</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" style="display:flex;flex-direction:column;">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title">Control de Socios</div>
+      <div class="topbar-right">
+        <div class="live-label"><span class="live-dot"></span> En vivo</div>
+        <div style="font-size:11px;color:var(--color-text-secondary);">Miér 13 Mayo 2026</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;font-size:12px;">A</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- METRICS -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Total socios</div>
+          <div class="metric-val">248</div>
+          <div class="metric-sub">+5 este mes</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Al día</div>
+          <div class="metric-val green">203</div>
+          <div class="metric-sub">81.9%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Deudores</div>
+          <div class="metric-val orange">31</div>
+          <div class="metric-sub">12.5% del total</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Nuevos (mes)</div>
+          <div class="metric-val" style="color:#60a5fa;">14</div>
+          <div class="metric-sub">↑ vs abril: +3</div>
+        </div>
+      </div>
+
+      <!-- PANELS -->
+      <div class="panels-row">
+
+        <!-- TABLE PANEL -->
+        <div class="table-panel">
+          <div class="panel-header">
+            <div class="filter-tabs">
+              <button class="ftab active" onclick="filterTable('todos',this)">Todos</button>
+              <button class="ftab orange-tab" onclick="filterTable('deudores',this)">Deudores</button>
+              <button class="ftab" onclick="filterTable('activos',this)">Activos</button>
+              <button class="ftab" onclick="filterTable('nuevos',this)">Nuevos</button>
+            </div>
+            <input class="search-input" placeholder="🔍  Buscar socio..." oninput="searchTable(this.value)">
+          </div>
+          <div style="overflow-x:auto; overflow-y:auto; max-height:290px;">
+            <table id="socios-table">
+              <thead>
+                <tr>
+                  <th style="width:30%">Socio</th>
+                  <th style="width:18%">Plan</th>
+                  <th style="width:22%">Vencimiento</th>
+                  <th style="width:15%">Estado</th>
+                  <th style="width:15%">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GAUGE PANEL -->
+        <div class="gauge-panel">
+          <div class="panel-title" style="text-align:center;margin-bottom:12px;">Aforo actual</div>
+          <svg width="172" height="110" viewBox="0 0 172 110" style="display:block;margin:0 auto;">
+            <defs>
+              <linearGradient id="g-gauge" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#A3E635"/>
+                <stop offset="60%" stop-color="#facc15"/>
+                <stop offset="100%" stop-color="#F97316"/>
+              </linearGradient>
+            </defs>
+            <!-- Track arc -->
+            <path d="M20 100 A66 66 0 0 1 152 100" fill="none" stroke="var(--color-border-tertiary)" stroke-width="14" stroke-linecap="round"/>
+            <!-- Fill arc (57% = ~102deg out of 180deg) -->
+            <path id="gauge-fill" d="M20 100 A66 66 0 0 1 152 100" fill="none" stroke="url(#g-gauge)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="207 207" stroke-dashoffset="89"/>
+            <!-- Center text -->
+            <text x="86" y="88" text-anchor="middle" font-size="26" font-weight="500" fill="var(--color-text-primary)" font-family="var(--font-sans)">57</text>
+            <text x="86" y="104" text-anchor="middle" font-size="10" fill="var(--color-text-secondary)" font-family="var(--font-sans)">de 100 máx.</text>
+            <!-- Scale labels -->
+            <text x="16" y="115" text-anchor="middle" font-size="9" fill="var(--color-text-secondary)" font-family="var(--font-sans)">0</text>
+            <text x="86" y="30" text-anchor="middle" font-size="9" fill="var(--color-text-secondary)" font-family="var(--font-sans)">50</text>
+            <text x="156" y="115" text-anchor="middle" font-size="9" fill="var(--color-text-secondary)" font-family="var(--font-sans)">100</text>
+          </svg>
+          <div style="margin-top:4px;">
+            <div class="gauge-sub">Capacidad utilizada: <strong>57%</strong></div>
+          </div>
+          <div class="gauge-legend">
+            <div class="gauge-row"><span style="color:#A3E635;">●</span><span>Normal (&lt;70%)</span></div>
+            <div class="gauge-row"><span style="color:#facc15;">●</span><span>Moderado (70-85%)</span></div>
+            <div class="gauge-row"><span style="color:#F97316;">●</span><span>Lleno (&gt;85%)</span></div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary);padding-top:8px;">
+            <div>Último ingreso: <strong style="color:var(--color-text-primary);">08:42</strong></div>
+            <div style="margin-top:2px;">Última salida: <strong style="color:var(--color-text-primary);">08:38</strong></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const socios = [
+  { nombre: 'Ana Ramírez',      plan: 'Mensual',   vence: '31/05/2026', estado: 'activo',  esNuevo: false },
+  { nombre: 'Carlos Pérez',     plan: 'Trimestral',vence: '30/06/2026', estado: 'activo',  esNuevo: false },
+  { nombre: 'Laura Méndez',     plan: 'Mensual',   vence: '30/04/2026', estado: 'deudor',  esNuevo: false },
+  { nombre: 'Diego Torres',     plan: 'Anual',     vence: '01/03/2027', estado: 'activo',  esNuevo: true  },
+  { nombre: 'Sofía Herrera',    plan: 'Mensual',   vence: '30/04/2026', estado: 'deudor',  esNuevo: false },
+  { nombre: 'Mateo González',   plan: 'Mensual',   vence: '15/05/2026', estado: 'activo',  esNuevo: true  },
+  { nombre: 'Valentina Sosa',   plan: 'Trimestral',vence: '28/02/2026', estado: 'deudor',  esNuevo: false },
+  { nombre: 'Lucas Fernández',  plan: 'Mensual',   vence: '31/05/2026', estado: 'activo',  esNuevo: true  },
+];
+
+let filtroActivo = 'todos';
+let busqueda = '';
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  const filtrados = socios.filter(s => {
+    if (filtroActivo === 'deudores' && s.estado !== 'deudor') return false;
+    if (filtroActivo === 'activos' && (s.estado !== 'activo' || s.esNuevo)) return false;
+    if (filtroActivo === 'nuevos' && !s.esNuevo) return false;
+    if (busqueda && !s.nombre.toLowerCase().includes(busqueda.toLowerCase())) return false;
+    return true;
+  });
+  tbody.innerHTML = filtrados.map(s => {
+    let badgeHtml = '';
+    if (s.esNuevo) badgeHtml = '<span class="badge badge-new">Nuevo</span>';
+    else if (s.estado === 'deudor') badgeHtml = '<span class="badge badge-debt">Deudor</span>';
+    else badgeHtml = '<span class="badge badge-ok">Al día</span>';
+    const accionColor = s.estado === 'deudor' ? '#F97316' : '#A3E635';
+    const accionLabel = s.estado === 'deudor' ? 'Notificar' : 'Ver';
+    return `<tr>
+      <td title="${s.nombre}">${s.nombre}</td>
+      <td>${s.plan}</td>
+      <td>${s.vence}</td>
+      <td>${badgeHtml}</td>
+      <td><span style="color:${accionColor};font-size:11px;cursor:pointer;font-weight:500;">${accionLabel}</span></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--color-text-secondary);padding:20px;">Sin resultados</td></tr>`;
+}
+
+function filterTable(filtro, btn) {
+  filtroActivo = filtro;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function searchTable(val) {
+  busqueda = val;
+  renderTable();
+}
+
+renderTable();
+</script>
